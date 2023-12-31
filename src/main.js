@@ -4,7 +4,7 @@ import view from './view';
 
 class Main {
   constructor() {
-    view.setSearchFormSubmitListener(this.onSearchFormSubmit);
+    view.setSearchFormSubmitListener(this.onSearchFormSubmit.bind(this));
     view.setLoadMoreBtnClickListener(this.onLoadMoreBtnClick);
   }
 
@@ -25,12 +25,16 @@ class Main {
 
     settings.isLastPage = false;
 
-    const data = await model.fetchCards(settings.currentSearchQuery);
+    const data = await model.fetchCards(
+      settings.currentSearchQuery,
+      settings.currentPage
+    );
 
     view.renderCards(data);
 
-    view.showLoadMoreBtn();
+    // this.createObserver();
 
+    if (!settings.isLastPage) view.showLoadMoreBtn();
     view.toggleLoader();
   }
 
@@ -42,13 +46,34 @@ class Main {
       settings.currentSearchQuery,
       ++settings.currentPage
     );
-    view.toggleLoader();
 
+    view.toggleLoader();
     view.renderCards(res);
 
-    view.scrollToNewCards();
+    // this.createObserver();
 
+    view.scrollToNewCards();
     if (!settings.isLastPage) view.showLoadMoreBtn();
+  }
+
+  createObserver() {
+    const observer = new IntersectionObserver(
+      (entries, observer) => {
+        entries.forEach(item => {
+          if (item.isIntersecting) {
+            this.onLoadMoreBtnClick();
+            observer.disconnect();
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.2,
+      }
+    );
+    const target = document.querySelector('.card-item:last-of-type');
+    observer.observe(target);
   }
 }
 

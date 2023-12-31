@@ -2,7 +2,6 @@ import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
 import SimpleLightbox from 'simplelightbox';
-
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 class View {
@@ -10,9 +9,6 @@ class View {
   #cardsList = document.querySelector('.card-list');
   #loader = document.querySelector('.loader');
   #loadMoreBtn = document.querySelector('.load-more-btn');
-
-  #currentSearchQuery = '';
-  #currentPage = 1;
 
   #simplelightboxInstance = new SimpleLightbox('.card-item a', {
     captionsData: 'alt',
@@ -27,12 +23,6 @@ class View {
 
   setLoadMoreBtnClickListener(callback) {
     this.#loadMoreBtn.addEventListener('click', callback);
-  }
-
-  onLoadMoreBtnClick() {
-    fetchCards(this.#currentSearchQuery, ++this.#currentPage).then(
-      this.renderCards.bind(this)
-    );
   }
 
   renderCards({ hits }) {
