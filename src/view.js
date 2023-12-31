@@ -33,6 +33,7 @@ class View {
           'Sorry, there are no images matching your search query. Please try again!',
         position: 'topRight',
       });
+
     const markup = this.getMarkup(hits);
     this.#cardsList.insertAdjacentHTML('beforeend', markup);
 

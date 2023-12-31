@@ -16,14 +16,13 @@ class Main {
     if (!settings.currentSearchQuery.trim()) return;
 
     settings.currentPage = 1;
+    settings.isLastPage = false;
 
     e.currentTarget.elements.search.value = '';
 
     view.clearCardsList();
     view.toggleLoader();
     view.hideLoadMoreBtn();
-
-    settings.isLastPage = false;
 
     const data = await model.fetchCards(
       settings.currentSearchQuery,
@@ -34,7 +33,7 @@ class Main {
 
     // this.createObserver();
 
-    if (!settings.isLastPage) view.showLoadMoreBtn();
+    if (!settings.isLastPage && data.totalHits) view.showLoadMoreBtn();
     view.toggleLoader();
   }
 

@@ -20,7 +20,7 @@ class Model {
         },
       });
 
-      if (res.data.totalHits <= page * PER_PAGE) {
+      if (res.data.totalHits <= page * PER_PAGE && res.data.totalHits) {
         settings.isLastPage = true;
         iziToast.info({
           message: "We're sorry, but you've reached the end of search results.",
