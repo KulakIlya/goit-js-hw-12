@@ -19,16 +19,7 @@ class View {
     captionDelay: 250,
   });
 
-  constructor() {
-    // this.#searchForm.addEventListener(
-    //   'submit',
-    //   this.onSearchFormSubmit.bind(this)
-    // );
-    // this.#loadMoreBtn.addEventListener(
-    //   'click',
-    //   this.onLoadMoreBtnClick.bind(this)
-    // );
-  }
+  constructor() {}
 
   setSearchFormSubmitListener(callback) {
     this.#searchForm.addEventListener('submit', callback);
