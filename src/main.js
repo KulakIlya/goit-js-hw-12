@@ -1,11 +1,12 @@
-import { settings } from './helpers';
+import iziToast from 'izitoast';
+import { PER_PAGE, settings } from './helpers';
 import model from './model';
 import view from './view';
 
 class Main {
   constructor() {
     view.setSearchFormSubmitListener(this.onSearchFormSubmit.bind(this));
-    view.setLoadMoreBtnClickListener(this.onLoadMoreBtnClick);
+    view.setLoadMoreBtnClickListener(this.onLoadMoreBtnClick.bind(this));
   }
 
   async onSearchFormSubmit(e) {
@@ -29,9 +30,9 @@ class Main {
       settings.currentPage
     );
 
-    view.renderCards(data);
+    this.isLastPage(data);
 
-    // this.createObserver();
+    view.renderCards(data);
 
     if (!settings.isLastPage && data.totalHits) view.showLoadMoreBtn();
     view.toggleLoader();
@@ -41,38 +42,28 @@ class Main {
     view.hideLoadMoreBtn();
     view.toggleLoader();
 
-    const res = await model.fetchCards(
+    const data = await model.fetchCards(
       settings.currentSearchQuery,
       ++settings.currentPage
     );
 
     view.toggleLoader();
-    view.renderCards(res);
-
-    // this.createObserver();
+    this.isLastPage(data);
+    view.renderCards(data);
 
     view.scrollToNewCards();
     if (!settings.isLastPage) view.showLoadMoreBtn();
   }
 
-  createObserver() {
-    const observer = new IntersectionObserver(
-      (entries, observer) => {
-        entries.forEach(item => {
-          if (item.isIntersecting) {
-            this.onLoadMoreBtnClick();
-            observer.disconnect();
-          }
-        });
-      },
-      {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.2,
-      }
-    );
-    const target = document.querySelector('.card-item:last-of-type');
-    observer.observe(target);
+  isLastPage(data) {
+    if (data.totalHits <= settings.currentPage * PER_PAGE && data.totalHits) {
+      settings.isLastPage = true;
+      iziToast.info({
+        message: "We're sorry, but you've reached the end of search results.",
+      });
+
+      return;
+    }
   }
 }
 
